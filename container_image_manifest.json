@@ -13,7 +13,6 @@
         "quay.io/biocontainers/bcftools:1.14--h88f3f91_0",
         "quay.io/biocontainers/mulled-v2-5f89fe0cd045cb1d615630b9261a1d17943a9b6a:6a9ff0e76ec016c3d0d27e0c0d362339f2d787e6-0",
         "quay.io/biocontainers/sra-tools:2.11.0--pl5262h314213e_0",
-        "quay.io/biocontainers/bcftools:1.14--h88f3f91_0",
         "quay.io/biocontainers/scipy:1.1.0"
     ]
 }
