@@ -2,6 +2,9 @@
     "input":{
         "description" : "Path to comma-separated file containing information about the samples in the experiment"
     },
+        "workflow":{
+        "description" : "Run the pre-mycosnp or mycosnp workflow. Options are 'PRE_MYCOSNP' or 'NFCORE_MYCOSNP'"
+    },
     "outdir":{
         "description" : "Output directory where the results will be saved. Absolute path must be used for storage on cloud infrastructure"
     }
