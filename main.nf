@@ -70,8 +70,11 @@ workflow {
         PRE_MYCOSNP()
     } else if (params.workflow == 'NFCORE_MYCOSNP') {
         NFCORE_MYCOSNP()
+    } else if (params.workflow == 'BOTH') {
+        PRE_MYCOSNP()
+        NFCORE_MYCOSNP()
     } else {
-        log.error "Invalid workflow specified. Use 'PRE_MYCOSNP' or 'NFCORE_MYCOSNP'."
+        log.error "Invalid workflow specified. Use 'PRE_MYCOSNP' , 'NFCORE_MYCOSNP', 'BOTH'."
         exit 1
     }
 }
