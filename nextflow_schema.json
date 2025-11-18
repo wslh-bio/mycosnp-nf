@@ -12,7 +12,7 @@
             "properties": {
                 "workflow": {
                     "type": "string",
-                    "enum": ["PRE_MYCOSNP", "NFCORE_MYCOSNP"],
+                    "enum": ["PRE_MYCOSNP", "NFCORE_MYCOSNP", "BOTH"],
                     "default": "NFCORE_MYCOSNP",
                     "description": "Name of the workflow to run (`PRE_MYCOSNP` for Pre-MycoSNP workflow | `NFCORE_MYCOSNP` for main MycoSNP workflow).",
                     "help_text": "Specify the workflow you want to execute. Options are 'PRE_MYCOSNP' or 'NFCORE_MYCOSNP'."
