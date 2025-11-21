@@ -1,7 +1,99 @@
-# nf-core/mycosnp: Changelog
+# CDCgov/mycosnp-nf: Changelog
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## v1.6.3 - [07/25/2025]
+### Fixed
+- [Pre-MycoSNP workflow] GC content calculation for closest GAMBIT match (`Reference_GC` field in pre-mycosnp-summary.csv) excluded lowercase (soft-masked) bases, i.e. "c" and "g", leading to underestimates for `Reference_GC`. This fix includes lowercase "g" and "c" in the GC content calculation in `bin/pre-mycosnp-stats.sh`, for both the closest GAMBIT match and the sample assembly. However, the sample assembly shouldn't contain any soft-masked bases to begin with, so this shouldn't result in any differences in `Sample_Assembly_GC`.
+
+## v1.6.2 - [05/18/2025]
+### Fixed
+- Docker permissions issue with GAMBIT container in some Linux environments (issue [#137](https://github.com/CDCgov/mycosnp-nf/issues/137))
+
+### Changed
+- Bumped GAMBIT fungal database from v0.2.0 to v1.0.0. See [GAMBIT'S documentation](https://theiagen.notion.site/GAMBIT-7c1376b861d0486abfbc316480046bdc#3f6610c81fbb4812b745234441514e12) for details about the databases.
+- Bumped GAMBIT version from v1.0.0 to v1.1.0. Database is now included with the repo in `assets/gambit_db/`. Signatures database in `assets/gambit_db/signatures/` (split into chunks so each chunks is below GitHub's file size limit of 100 MB and warning limit of 50 MB). See GAMBIT v1.1.0 [release notes](https://github.com/jlumpe/gambit/releases/tag/v1.1.0) for more info (no functional changes).
+
+## v1.6.1 - [05/09/2025]
+
+### Changed
+- Switched Shovill container image to StaPH-B's Docker image (`quay.io/staphb/shovill:1.1.0-2022Dec`). Addresses issues with pulling image from Docker Hub (#134).
+- Reordered params in `nextflow_schema.json` to be more intuitive.
+
+## v1.6.0 - [04/21/2025]
+
+### Added
+- Added the "Pre-MycoSNP" workflow for quick fungal taxonomic classification and _Candida auris_ clade typing (using de novo assemblies)
+    - Base workflow development by Jared Johnson [@DOH-JDJ0303](https://github.com/DOH-JDJ0303) (#119)
+    - Original sourmash subtyping subworkflow by Charlotte Royer [@royercj](https://github.com/royercj) (#114)
+    - Co-development, validation, testing, and documentation by Zack Mudge [@zmudge3](https://github.com/zmudge3)
+- Added the "Genome Fraction" metric to the main MycoSNP workflow's [QC report](/docs/output.md#qc-report-statsqc_reportqc_reporttxt), by CJ Jossart [@cjjossart](https://github.com/cjjossart) (#123, #128)
+- Nextflow Tower / Seqera Cloud functionality, by Jared Johnson [@DOH-JDJ0303](https://github.com/DOH-JDJ0303) (#104)
+- Added FKS1 coordinates for a third hotspot region (single amino acid) associated with echinocandin resistance in _Candida auris_ (for the snpeffr report - `results/snpeff/combined_cauris_refB11205_fks1.csv`)
+
+### Changed
+- Bumped GATK version to 4.5.0.0
+- Changed SnpEff-related config to work with cloud, by Jared Johnson [@DOH-JDJ0303](https://github.com/DOH-JDJ0303) (#103)
+- Updated samplesheet and reference genome links in [test.config](/conf/test.config)
+- Changed filename of `results/snpeff/combined.csv` to `results/snpeff/combined_cauris_refB11205_fks1.csv`
+- Bumped [snpeffr](https://github.com/CDCgov/snpeffr) version to v1.1.1. The "mutation" column in the snpeffr report (`results/snpeff/combined_cauris_refB11205_fks1.csv`) can now contain a value of "undetermined". This occurs when GATK identifies a variant in the individual VCF file for an isolate, but then the identified variant is lost in the subsequent step when GATK creates a merged VCF file that includes all isolates.
+    - Snpeffr v1.1.1 updates by Mal Rajeev [@mrajeev08](https://github.com/mrajeev08)
+
+### Removed
+- Removed `--tmpdir` parameter and associated config in [nextflow.config](/nextflow.config)
+
+### Fixed
+- Fixed _Candida auris_ FKS1 hotspot 1 coordinates in [nextflow.config](/nextflow.config), to include the first nucleotide of F635, and remove two extra nucleotides at the end
+
+### Deprecated
+- Nextflow `-entry` parameter to run specific workflow is deprecated. Use MycoSNP's `--workflow` parameter instead.
+
+## v1.5 Wingardium Leviosa - [05/09/2023]
+
+- Re-released on 12/12/2024 following #126 (added empty tmp directory - no changes in functionality)
+- Re-released on 09/03/2024 following #122 (disabled snpEff logging - no changes in functionality)
+
+**Added**
+
+- Added new subworkflow for `snpEff` variant annotation
+- Added `Quicksnp` module which creates a neighbor-joining tree with SNP distances on branches
+
+**Fixed**
+
+- Corrected an issue with downsampling read count calculations
+
+
+**Dependencies**
+
+- *N/A*
+
+**Deprecated**
+
+- Removed `rate` parameter to use `coverage` instead
+
+**TODO**
+
+- Update file naming for snpEff mutations file
+
+## v1.4 Tremella Snidget - [06/27/2022]
+
+### `Added`
+* Added containers for processes which did not have any container specified.
+### `Fixed`
+
+* Changed default --min-depth to 10
+
+### `Dependencies`
+
+### `Deprecated`
+
+*
+
+### `TODO`
+
+*
+
+---
 
 
 ## v1.3 Musky Albus - [06/09/2022]
