@@ -58,6 +58,15 @@ workflow NFCORE_MYCOSNP {
 
 /*
 ========================================================================================
+    RUN BOTH MYCOSNP AND PRE-MYCOSNP WORKFLOWS
+========================================================================================
+*/
+
+include { BOTH } from './workflows/both'
+
+
+/*
+========================================================================================
     RUN ALL WORKFLOWS
 ========================================================================================
 */
@@ -71,8 +80,7 @@ workflow {
     } else if (params.workflow == 'NFCORE_MYCOSNP') {
         NFCORE_MYCOSNP()
     } else if (params.workflow == 'BOTH') {
-        PRE_MYCOSNP()
-        NFCORE_MYCOSNP()
+        BOTH()
     } else {
         log.error "Invalid workflow specified. Use 'PRE_MYCOSNP' , 'NFCORE_MYCOSNP', 'BOTH'."
         exit 1
