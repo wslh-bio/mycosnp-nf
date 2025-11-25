@@ -10,7 +10,7 @@ process WSLH_SUMMARY {
     path clade_designation
 
     output:
-    path("*_")
+    path("*_qc_report.csv"), emit: qc_report
 
     when:
     task.ext.when == null || task.ext.when
