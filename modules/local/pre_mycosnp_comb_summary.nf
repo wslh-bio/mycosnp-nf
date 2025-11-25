@@ -7,7 +7,7 @@ process PRE_MYCOSNP_COMB_SUMMARY {
     path line_summary
 
     output:
-    path "pre-mycosnp-summary.csv"
+    path "pre-mycosnp-summary.csv" , emit: wslh_results
 
     when:
     task.ext.when == null || task.ext.when
