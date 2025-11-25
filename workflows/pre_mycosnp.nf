@@ -252,6 +252,9 @@ workflow PRE_MYCOSNP_WF {
     )
     multiqc_report = MULTIQC.out.report.toList()
     ch_versions    = ch_versions.mix(MULTIQC.out.versions)
+
+    emit:
+        pre_mycosnp_summary = PRE_MYCOSNP_COMB_SUMMARY.out.wslh_results
 }
 
 /*
