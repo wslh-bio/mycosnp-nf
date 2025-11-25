@@ -6,6 +6,9 @@
         "description" : "Path to sra samplesheet",
         "optional" : true
     },
+    "runname":{
+        "description" : "Run name to identify the analysis"
+    },
     "outdir":{
         "description" : "Output directory where the results will be saved. Absolute path must be used for storage on cloud infrastructure"
     }
