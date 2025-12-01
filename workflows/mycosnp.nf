@@ -378,7 +378,6 @@ workflow MYCOSNP {
     ch_multiqc_files = ch_multiqc_files.mix(BWA_PREPROCESS.out.flagstat.map{meta, stats -> [stats]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(BWA_PREPROCESS.out.idxstats.map{meta, stats -> [stats]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(BWA_PREPROCESS.out.qualimap.map{meta, stats -> [stats]}.ifEmpty([]))
-    
 
     MULTIQC (
         ch_multiqc_files.collect()
@@ -386,6 +385,9 @@ workflow MYCOSNP {
     multiqc_report = MULTIQC.out.report.toList()
     ch_versions    = ch_versions.mix(MULTIQC.out.versions)
 
+    emit:
+    qc_stats        = QC_REPORTSHEET.out.qc_reportsheet
+    fks1_combined   = SNPEFF.out.csv_snpeffr
 /*
 ========================================================================================
     //                       SUBWORKFLOW: Run SNPEFF_BUILD 
