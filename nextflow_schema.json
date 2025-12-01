@@ -44,6 +44,11 @@
                     "help_text": "You will need to create a csv file with information about the sra samples you want to add. Use this parameter to specify its location. It has to be a comma-separated file with 1 or 2 columns. See [usage docs](https://github.com/CDCgov/mycosnp-nf/blob/master/docs/usage.md).",
                     "fa_icon": "fas fa-file-csv"
                 },
+                "runname": {
+                    "type": "string",
+                    "description": "Name for the analysis run.",
+                    "fa_icon": "fas fa-file-csv"
+                },
                 "add_vcf_file": {
                     "type": "string",
                     "format": "file-path",
