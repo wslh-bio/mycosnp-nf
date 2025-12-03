@@ -147,6 +147,6 @@ workflow BOTH {
         MYCOSNP.out.qc_stats,
         params.runname,
         MYCOSNP.out.fks1_combined,
-        PRE_MYCOSNP_WF.out.wslh_results
+        PRE_MYCOSNP_WF.out.pre_mycosnp_summary
     )
 }
