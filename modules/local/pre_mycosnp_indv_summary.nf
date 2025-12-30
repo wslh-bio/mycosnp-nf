@@ -9,7 +9,7 @@ process PRE_MYCOSNP_INDV_SUMMARY {
 
     input:
     tuple val(meta), path(assembly), path(faqcs), path(gambit), path(subtype)
-    mapped_file
+    val mapped_file
 
     output:
     tuple val(meta), path("*_linesummary.csv"), emit: result
