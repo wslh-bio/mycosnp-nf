@@ -220,7 +220,8 @@ workflow PRE_MYCOSNP_WF {
     SHOVILL.out.contigs.map{ meta, contigs -> [meta, contigs] }.join(ch_faqcs_txt).join(ch_gambit).join(ch_subtype).set{ ch_line_summary_input }
 
     PRE_MYCOSNP_INDV_SUMMARY(
-        ch_line_summary_input
+        ch_line_summary_input,
+        params.closest_accession_map_file
     )
 
     //
