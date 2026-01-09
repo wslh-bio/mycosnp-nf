@@ -91,6 +91,7 @@ include { SEQKIT_PAIR              } from '../modules/nf-core/modules/seqkit/pai
 include { FAQCS                    } from '../modules/nf-core/modules/faqcs/main'
 include { GAMBIT_QUERY             } from '../modules/local/gambit'
 include { SUBTYPE                  } from '../modules/local/subtype'
+include { EXTRACT_CLOSEST_ACCESSION} from '../modules/local/extract_closest_accession'
 include { PRE_MYCOSNP_INDV_SUMMARY } from '../modules/local/pre_mycosnp_indv_summary'
 include { PRE_MYCOSNP_COMB_SUMMARY } from '../modules/local/pre_mycosnp_comb_summary'
 /*
@@ -219,9 +220,24 @@ workflow PRE_MYCOSNP_WF {
     SUBTYPE.out.subtype.map{ meta, subtype -> [meta, subtype] }.set{ ch_subtype }
     SHOVILL.out.contigs.map{ meta, contigs -> [meta, contigs] }.join(ch_faqcs_txt).join(ch_gambit).join(ch_subtype).set{ ch_line_summary_input }
 
+    EXTRACT_CLOSEST_ACCESSION(
+        ch_gambit,
+        params.closest_accession_map_file
+    )
+
+    EXTRACT_CLOSEST_ACCESSION
+        .out
+        .accession_and_uri
+        .map{ meta, closest, s3_uri ->
+            [s3_uri]
+        }
+        .set{ ch_s3_uri }
+
+        ch_s3_uri.view { "S3 URI Channel: ${it}" }
+
     PRE_MYCOSNP_INDV_SUMMARY(
         ch_line_summary_input,
-        params.closest_accession_map_file
+        ch_s3_uri
     )
 
     //
