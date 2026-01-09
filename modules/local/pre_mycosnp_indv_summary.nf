@@ -9,7 +9,7 @@ process PRE_MYCOSNP_INDV_SUMMARY {
 
     input:
     tuple val(meta), path(assembly), path(faqcs), path(gambit), path(subtype)
-    val mapped_file
+    val (ref)
 
     output:
     tuple val(meta), path("*_linesummary.csv"), emit: result
@@ -22,24 +22,9 @@ process PRE_MYCOSNP_INDV_SUMMARY {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    ## Extract relevant fields from Gambit output
-    taxon=\$(cat "${gambit}" | grep -v "predicted.name" | cut -f 2 -d ',')
-    rank=\$(cat "${gambit}" | grep -v "predicted.rank" | cut -f 3 -d ',')
-    distance=\$(printf "%.4f" \$(cat "${gambit}" | grep -v "closest.distance" | cut -f 6 -d ','))
-    closest=\$(cat "${gambit}" | grep -v 'closest.description' | cut -f 7 -d ',')
-    closest_accession=\$(echo "\${closest}" | cut -f 1 -d ' ' | tr -d '[] \\t\\n\\r')
-
-    subtype_closest_match=""
-    subtype_ani=""
-
-    if [[ "\${rank}" == "species" ]]; then
-        # Download the Gambit reference for estimating average depth of coverage
-        retry_with_backoff.sh -d 15 pull_accession.py -m ${mapped_file} -o "downloaded_mapped_file.tsv" -a \${closest_accession}
-        unzip ncbi_dataset.zip && mv ncbi_dataset/data/*/*.fna ./ref.fa
-
         # Gather QC stats
         pre-mycosnp-stats.sh \\
-            -r ref.fa \\
+            -r "${ref}" \\
             "${prefix}" \\
             "${assembly}" \\
             "${prefix}.stats.txt" \\
