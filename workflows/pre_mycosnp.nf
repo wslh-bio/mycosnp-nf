@@ -233,8 +233,6 @@ workflow PRE_MYCOSNP_WF {
         }
         .set{ ch_s3_uri }
 
-        ch_s3_uri.view { "S3 URI Channel: ${it}" }
-
     PRE_MYCOSNP_INDV_SUMMARY(
         ch_line_summary_input,
         ch_s3_uri
