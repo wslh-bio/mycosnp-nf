@@ -52,7 +52,13 @@ faqcs_stats="$3"
 faqcs_qual="$4"
 
 # decompress the sample and/or reference assemblies
-gzip -d "${assembly}" "${ref}" || true
+if [[ "${assembly}" == *.gz ]]; then
+    gzip -d "${assembly}" || true
+fi
+
+if [[ "${ref}" == *.gz ]]; then
+    gzip -d "${ref}" || true
+fi
 
 #----- READ STATS -----#
 # total trimmed reads
