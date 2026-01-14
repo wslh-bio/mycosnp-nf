@@ -159,7 +159,7 @@ workflow PRE_MYCOSNP_WF {
     FASTQC_RAW (
         ch_all_reads
     )
-    ch_versions = ch_versions.mix(FASTQC_RAW.out.versions.first())
+    ch_versions = ch_versions.mix(FASTQC_RAW.out.versions)
 
     //
     // MODULE: Run seqkit to remove unpaired reads
@@ -167,7 +167,7 @@ workflow PRE_MYCOSNP_WF {
     SEQKIT_PAIR(
         ch_all_reads
     )
-    ch_versions = ch_versions.mix(SEQKIT_PAIR.out.versions.first())
+    ch_versions = ch_versions.mix(SEQKIT_PAIR.out.versions)
 
     //
     // MODULE: Run FAQCs - no downsampling option because a reference cannot be supplied before knowing the species
@@ -175,7 +175,7 @@ workflow PRE_MYCOSNP_WF {
     FAQCS(
         SEQKIT_PAIR.out.reads
     )
-    ch_versions = ch_versions.mix(FAQCS.out.versions.first())
+    ch_versions = ch_versions.mix(FAQCS.out.versions)
 
     //
     // MODULE: Run Shovill
@@ -183,7 +183,7 @@ workflow PRE_MYCOSNP_WF {
     SHOVILL (
         FAQCS.out.reads
     )
-    ch_versions = ch_versions.mix(SHOVILL.out.versions.first())
+    ch_versions = ch_versions.mix(SHOVILL.out.versions)
 
     //
     // MODULE: Run Gambit
@@ -193,7 +193,7 @@ workflow PRE_MYCOSNP_WF {
         params.gambit_db,
         params.gambit_h5_dir
     )
-    ch_versions = ch_versions.mix(GAMBIT_QUERY.out.versions.first())
+    ch_versions = ch_versions.mix(GAMBIT_QUERY.out.versions)
 
     //
     // MODULE: Subtype
@@ -208,7 +208,7 @@ workflow PRE_MYCOSNP_WF {
         ch_gambit_assembly,
         params.subtype_db
     )
-    ch_versions = ch_versions.mix(SUBTYPE.out.versions.first())
+    ch_versions = ch_versions.mix(SUBTYPE.out.versions)
 
     //
     // MODULE: Create line summary for each sample
@@ -227,10 +227,9 @@ workflow PRE_MYCOSNP_WF {
 
     EXTRACT_CLOSEST_ACCESSION
         .out
-        .accession_and_uri
-        .map{ meta, closest, s3_uri ->
-            [s3_uri]
-        }
+        .acc_and_uri
+        .map{ meta, s3_uri, closest_accession -> 
+            [meta.id, s3_uri] }
         .set{ ch_s3_uri }
 
     PRE_MYCOSNP_INDV_SUMMARY(
