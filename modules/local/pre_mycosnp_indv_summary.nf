@@ -4,12 +4,12 @@ process PRE_MYCOSNP_INDV_SUMMARY {
     
     conda (params.enable_conda ? "conda-forge::ncbi-datasets-cli=16.41.0" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/python:3.8.3' :
-        'quay.io/biocontainers/python:3.8.3' }"
+        'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
+        'quay.io/nf-core/ubuntu:20.04' }"
 
     input:
     tuple val(meta), path(assembly), path(faqcs), path(gambit), path(subtype)
-    val (ref)
+    tuple val(id), path(s3_uri)
 
     output:
     tuple val(meta), path("*_linesummary.csv"), emit: result
@@ -22,9 +22,20 @@ process PRE_MYCOSNP_INDV_SUMMARY {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
+    ## Extract relevant fields from Gambit output
+    taxon=\$(cat "${gambit}" | grep -v "predicted.name" | cut -f 2 -d ',')
+    rank=\$(cat "${gambit}" | grep -v "predicted.rank" | cut -f 3 -d ',')
+    distance=\$(printf "%.4f" \$(cat "${gambit}" | grep -v "closest.distance" | cut -f 6 -d ','))
+    closest=\$(cat "${gambit}" | grep -v 'closest.description' | cut -f 7 -d ',')
+    closest_accession=\$(echo "\${closest}" | cut -f 1 -d ' ' | tr -d '[] \\t\\n\\r')
+
+    subtype_closest_match=""
+    subtype_ani=""
+
+    if [[ "\${rank}" == "species" ]]; then
         # Gather QC stats
         pre-mycosnp-stats.sh \\
-            -r "${ref}" \\
+            -r "${s3_uri}" \\
             "${prefix}" \\
             "${assembly}" \\
             "${prefix}.stats.txt" \\
