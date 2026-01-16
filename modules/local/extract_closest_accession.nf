@@ -27,7 +27,7 @@ process EXTRACT_CLOSEST_ACCESSION {
     # Look up the S3 URI from the mapping file
     if [[ -n "\${closest_accession}" ]]; then
         s3_uri=\$(awk -v acc="\${closest_accession}" '\$1 == acc {print \$2}' ${mapping_reference_file})
-        
+
         if [[ -z "\${s3_uri}" ]]; then
             echo "Warning: No S3 URI found for accession \${closest_accession}" >&2
             s3_uri="NONE"
