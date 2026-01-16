@@ -62,6 +62,9 @@ workflow NFCORE_MYCOSNP {
 ========================================================================================
 */
 
+//
+// WORKFLOW: Run both nf-core/mycosnp and pre-mycosnp analysis pipelines
+//
 include { BOTH } from './workflows/both'
 
 
