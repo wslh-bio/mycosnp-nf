@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import logging
@@ -7,7 +7,7 @@ import argparse
 import numpy as np
 import pandas as pd
 
-logging.basicConfig(level = logging.INFO, format = '%(levelname)s : %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(levelname)s : %(message)s')
 
 def sanitize_clade(dataframe):
 
