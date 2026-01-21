@@ -17,10 +17,10 @@ process WSLH_SUMMARY {
 
     script:
     """
-    mycosnp_results_summary.py \
-    -qc ${qc_stats} \
-    -r ${runname} \
-    -f ${fks1_combined} \
+    mycosnp_results_summary.py \\
+    -qc ${qc_stats} \\
+    -r ${runname} \\
+    -f ${fks1_combined} \\
     -c ${clade_designation}
     """
 }
