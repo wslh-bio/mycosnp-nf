@@ -1,11 +1,8 @@
 process PRE_MYCOSNP_INDV_SUMMARY {
     tag "$meta.id"
     label 'process_low'
-    
-    conda (params.enable_conda ? "conda-forge::ncbi-datasets-cli=16.41.0" : null)
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
-        'quay.io/nf-core/ubuntu:20.04' }"
+
+    container 'ubuntu:jammy'
 
     input:
     tuple val(meta), path(assembly), path(faqcs), path(gambit), path(subtype)
