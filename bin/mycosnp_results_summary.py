@@ -116,7 +116,7 @@ def create_qc_reports(merged_df, run_name):
     ]
 
     logging.debug("Creating qc_report file")
-    merged_df.to_csv(run_name + '_qc_report.csv', columns=qc_report_columns, index=False)
+    merged_df.to_csv(run_name + 'mycosnp_qc_report.csv', columns=qc_report_columns, index=False)
 
 class CompileResults(argparse.ArgumentParser):
 
