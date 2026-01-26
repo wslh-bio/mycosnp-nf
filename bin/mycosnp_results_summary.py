@@ -116,7 +116,7 @@ def create_qc_reports(merged_df, run_name):
     ]
 
     logging.debug("Creating qc_report file")
-    merged_df.to_csv(run_name + 'mycosnp_qc_report.csv', columns=qc_report_columns, index=False)
+    merged_df.to_csv(run_name + '_mycosnp_qc_report.csv', columns=qc_report_columns, index=False)
 
 class CompileResults(argparse.ArgumentParser):
 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     parser = CompileResults(prog = 'Compiles all of the mycosnp results into a WSLH specific report',
         description = "Generate QC report and NCBI Biosample and SRA spreadsheets for Candida auris submission.",
-        epilog = "Example usage: python CA_post_mycosnp.py -qc <QC_STATS> -m <CAURIS_MASTER_LOG_COPY> -r <BATCH_NAME> -f <FKS1> -c <CLADE_DESIGNATION>"
+        epilog = "Example usage: python CA_post_mycosnp.py -qc <QC_STATS> -r <BATCH_NAME> -f <FKS1> -c <CLADE_DESIGNATION>"
         )
     parser.add_argument(
         "-qc",
