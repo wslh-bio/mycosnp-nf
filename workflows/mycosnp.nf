@@ -156,7 +156,47 @@ workflow MYCOSNP {
         INPUT_CHECK (
             ch_input
         )
-        ch_all_reads = ch_all_reads.mix(INPUT_CHECK.out.reads)
+
+        INPUT_CHECK.out.reads
+            .branch{ meta, file -> 
+                single_end: meta.single_end
+                paired_end: !meta.single_end
+                }
+            .set{ ch_filtered }
+
+        ch_filtered.paired_end
+            .map{ meta, file ->
+                [meta, file, file[0].countFastq(), file[1].countFastq()]}
+            .branch{ meta, file, count1, count2 ->
+                pass: count1 > 0 && count2 > 0
+                fail: count1 == 0 || count2 == 0 || count1 == 0 && count2 == 0
+            }
+            .set{ ch_paired_end }
+
+        ch_paired_end.pass
+            .map { meta, file, count1, count2 -> 
+                [meta, file]
+                }
+            .set{ ch_filtered }
+
+        ch_paired_end.fail
+            .map { meta, file, count1, count2 ->
+                [meta.id]
+                }
+            .set{ ch_paired_end_fail }
+
+        ch_paired_end_fail
+            .flatten()
+            .set{ ch_failed }
+
+        ch_failed
+            .collectFile(
+                storeDir: "${params.outdir}/rejected_samples",
+                name: 'Mycosnp_empty_samples.csv',
+                newLine: true
+            )
+
+        ch_all_reads = ch_all_reads.mix(ch_filtered)
         ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     }
 
