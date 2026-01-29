@@ -187,8 +187,7 @@ workflow PRE_MYCOSNP_WF {
             .collectFile(
                 storeDir: "${params.outdir}/rejected_samples",
                 name: 'Pre_mycosnp_empty_samples.csv',
-                newLine: true,
-                skip: { it == 'NO_FAILURES' } 
+                newLine: true
             )
 
         ch_all_reads = ch_all_reads.mix(ch_filtered)
