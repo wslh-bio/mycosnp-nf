@@ -183,10 +183,12 @@ workflow PRE_MYCOSNP_WF {
             .set{ ch_failed }
 
         ch_failed
+            .ifEmpty { Channel.value('NO_FAILURES') }
             .collectFile(
                 storeDir: "${params.outdir}/rejected_samples",
                 name: 'Pre_mycosnp_empty_samples.csv',
-                newLine: true
+                newLine: true,
+                skip: { it == 'NO_FAILURES' } 
             )
 
         ch_all_reads = ch_all_reads.mix(ch_filtered)
