@@ -185,8 +185,7 @@ workflow PRE_MYCOSNP_WF {
         ch_failed
             .ifEmpty { Channel.value('NO_FAILURES') }
             .collectFile(
-                storeDir: "${params.outdir}/rejected_samples",
-                name: 'Pre_mycosnp_empty_samples.csv',
+                name: '${params.outdir}/rejected_samples/Pre_mycosnp_empty_samples.csv',
                 newLine: true
             )
 
