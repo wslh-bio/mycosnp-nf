@@ -9,7 +9,7 @@ process REPORT_REJECTED_SAMPLES {
     val workflow
 
     output:
-    path "Pre_mycosnp_empty_samples.csv"
+    path "*empty_samples.csv"
 
     script:
     """
