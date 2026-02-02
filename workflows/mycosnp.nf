@@ -103,7 +103,7 @@ include { GATK_VARIANTS      } from '../subworkflows/local/gatk-variants'
 include { CREATE_PHYLOGENY   } from '../subworkflows/local/phylogeny'
 include { SNPEFF_BUILD       } from '../subworkflows/local/snpeff_build'
 include { SNPEFF             } from '../subworkflows/local/snpeff'
-include { REJECTED_SAMPLES  } from '../modules/local/rejected_samples'
+include { REJECTED_SAMPLES   } from '../modules/local/rejected_samples'
 
 /*
 ========================================================================================
