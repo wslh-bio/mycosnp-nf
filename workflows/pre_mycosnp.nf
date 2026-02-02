@@ -94,7 +94,7 @@ include { SUBTYPE                  } from '../modules/local/subtype'
 include { EXTRACT_CLOSEST_ACCESSION} from '../modules/local/extract_closest_accession'
 include { PRE_MYCOSNP_INDV_SUMMARY } from '../modules/local/pre_mycosnp_indv_summary'
 include { PRE_MYCOSNP_COMB_SUMMARY } from '../modules/local/pre_mycosnp_comb_summary'
-include { REPORT_REJECTED_SAMPLES  } from '../modules/local/report_rejected_samples'
+include { REJECTED_SAMPLES         } from '../modules/local/rejected_samples'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -191,7 +191,7 @@ workflow PRE_MYCOSNP_WF {
             )
             .set{ ch_rejected_file }
 
-        REPORT_REJECTED_SAMPLES (
+        REJECTED_SAMPLES (
                 ch_rejected_file,
                 "Pre_mycosnp"
             )

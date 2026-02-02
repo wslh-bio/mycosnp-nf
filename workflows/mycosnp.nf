@@ -103,7 +103,7 @@ include { GATK_VARIANTS      } from '../subworkflows/local/gatk-variants'
 include { CREATE_PHYLOGENY   } from '../subworkflows/local/phylogeny'
 include { SNPEFF_BUILD       } from '../subworkflows/local/snpeff_build'
 include { SNPEFF             } from '../subworkflows/local/snpeff'
-include { REPORT_REJECTED_SAMPLES  } from '../modules/local/report_rejected_samples'
+include { REJECTED_SAMPLES  } from '../modules/local/rejected_samples'
 
 /*
 ========================================================================================
@@ -199,10 +199,10 @@ workflow MYCOSNP {
             )
             .set{ ch_rejected_file }
 
-        REPORT_REJECTED_SAMPLES (
-                ch_rejected_file,
-                "Mycosnp"
-            )
+        REJECTED_SAMPLES (
+            ch_rejected_file,
+            "Mycosnp"
+        )
 
         ch_all_reads = ch_all_reads.mix(ch_filtered)
         ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
