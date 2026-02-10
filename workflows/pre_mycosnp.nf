@@ -184,7 +184,7 @@ workflow PRE_MYCOSNP_WF {
             .set{ ch_failed }
 
         ch_failed
-            .ifEmpty { Channel.value('NO_EMPTY_SAMPLES') }
+            .ifEmpty ('NO_EMPTY_SAMPLES')
             .collectFile(
                 name: 'empty_samples.csv',
                 newLine: true
