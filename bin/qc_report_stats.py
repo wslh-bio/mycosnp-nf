@@ -4,7 +4,7 @@ from importlib.resources import path
 import argparse
 import pandas as pd
 
-# Arguement parser: get arguments from FAQCS text files
+# Argument parser: get arguments from FAQCS and qualimap text files
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--sample")
 parser.add_argument("--stats", type=argparse.FileType("r"))
@@ -101,13 +101,14 @@ for line in args.bam_coverage:
 
 # Parsing genome fraction from qualimap genome_fraction_coverage.txt
 next(args.genome_fraction)
+genome_fraction = "not found at specified min_depth"
 for line in args.genome_fraction:
     columns = line.strip().split('\t')
     if float(columns[0]) == float(args.min_depth):
         genome_fraction = float(columns[1])
+        # Format for qc_report.txt
+        genome_fraction = "{:.2f}".format(genome_fraction) + "%"
         break
-    else:
-        genome_fraction = 0
 
 # Preparing output list with variables and then reformatting into a string
 output_list = [
@@ -124,7 +125,7 @@ output_list = [
     "{:.2f}".format(coverage_after),
     "{:.2f}".format(mean_depth_coverage),
     str(reads_mapped),
-    "{:.2f}".format(genome_fraction)
+    genome_fraction
 ]
 
 # Creating tab delimited string for qc report generation

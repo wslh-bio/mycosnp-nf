@@ -12,9 +12,6 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 params.snpeffconfig = WorkflowMain.getGenomeAttribute(params, 'snpeffconfig')
 
 
-// Validate input parameters
-WorkflowMycosnp.initialise(params, log)
-
 // Check input path parameters to see if they exist
 def checkPathParamList = [ params.input, params.multiqc_config, params.fasta ] // params.snpeffdb
 if (params.skip_samples_file) { // check for skip_samples_file
@@ -106,6 +103,8 @@ include { GATK_VARIANTS      } from '../subworkflows/local/gatk-variants'
 include { CREATE_PHYLOGENY   } from '../subworkflows/local/phylogeny'
 include { SNPEFF_BUILD       } from '../subworkflows/local/snpeff_build'
 include { SNPEFF             } from '../subworkflows/local/snpeff'
+include { REJECTED_SAMPLES   } from '../modules/local/rejected_samples'
+
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -136,6 +135,7 @@ def multiqc_report = []
 
 
 workflow MYCOSNP {
+    WorkflowMycosnp.initialise(params, log)
 
     ch_versions = Channel.empty()
 
@@ -158,7 +158,53 @@ workflow MYCOSNP {
         INPUT_CHECK (
             ch_input
         )
-        ch_all_reads = ch_all_reads.mix(INPUT_CHECK.out.reads)
+
+        INPUT_CHECK.out.reads
+            .branch{ meta, file -> 
+                single_end: meta.single_end
+                paired_end: !meta.single_end
+                }
+            .set{ ch_filtered }
+
+        ch_filtered.paired_end
+            .map{ meta, file ->
+                [meta, file, file[0].countFastq(), file[1].countFastq()]}
+            .branch{ meta, file, count1, count2 ->
+                pass: count1 > 0 && count2 > 0
+                fail: count1 == 0 || count2 == 0 || count1 == 0 && count2 == 0
+            }
+            .set{ ch_paired_end }
+
+        ch_paired_end.pass
+            .map { meta, file, count1, count2 -> 
+                [meta, file]
+                }
+            .set{ ch_filtered }
+
+        ch_paired_end.fail
+            .map { meta, file, count1, count2 ->
+                [meta.id]
+                }
+            .set{ ch_paired_end_fail }
+
+        ch_paired_end_fail
+            .flatten()
+            .set{ ch_failed }
+
+        ch_failed
+            .ifEmpty('NO_EMPTY_SAMPLES')
+            .collectFile(
+                name: 'empty_samples.csv',
+                newLine: true
+            )
+            .set{ ch_rejected_file }
+
+        REJECTED_SAMPLES (
+            ch_rejected_file,
+            "Mycosnp"
+        )
+
+        ch_all_reads = ch_all_reads.mix(ch_filtered)
         ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     }
 
@@ -380,7 +426,6 @@ workflow MYCOSNP {
     ch_multiqc_files = ch_multiqc_files.mix(BWA_PREPROCESS.out.flagstat.map{meta, stats -> [stats]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(BWA_PREPROCESS.out.idxstats.map{meta, stats -> [stats]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(BWA_PREPROCESS.out.qualimap.map{meta, stats -> [stats]}.ifEmpty([]))
-    
 
     MULTIQC (
         ch_multiqc_files.collect()
@@ -388,6 +433,9 @@ workflow MYCOSNP {
     multiqc_report = MULTIQC.out.report.toList()
     ch_versions    = ch_versions.mix(MULTIQC.out.versions)
 
+    emit:
+    qc_stats        = QC_REPORTSHEET.out.qc_reportsheet
+    fks1_combined   = SNPEFF.out.csv_snpeffr
 /*
 ========================================================================================
     //                       SUBWORKFLOW: Run SNPEFF_BUILD 

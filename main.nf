@@ -28,6 +28,21 @@ WorkflowMain.initialise(workflow, params, log)
 
 /*
 ========================================================================================
+    PRE-MYCOSNP
+========================================================================================
+*/
+
+include { PRE_MYCOSNP_WF } from './workflows/pre_mycosnp'
+
+//
+// WORKFLOW: Run pre-mycosnp pipeline
+//
+workflow PRE_MYCOSNP {
+    PRE_MYCOSNP_WF ()
+}
+
+/*
+========================================================================================
     NAMED WORKFLOW FOR PIPELINE
 ========================================================================================
 */
@@ -43,15 +58,36 @@ workflow NFCORE_MYCOSNP {
 
 /*
 ========================================================================================
+    RUN BOTH MYCOSNP AND PRE-MYCOSNP WORKFLOWS
+========================================================================================
+*/
+
+//
+// WORKFLOW: Run both nf-core/mycosnp and pre-mycosnp analysis pipelines
+//
+include { BOTH } from './workflows/both'
+
+
+/*
+========================================================================================
     RUN ALL WORKFLOWS
 ========================================================================================
 */
 
 //
-// WORKFLOW: Execute a single named workflow for the pipeline
+// WORKFLOW: Execute the specified workflow
 //
 workflow {
-    NFCORE_MYCOSNP ()
+    if (params.workflow == 'PRE_MYCOSNP') {
+        PRE_MYCOSNP()
+    } else if (params.workflow == 'NFCORE_MYCOSNP') {
+        NFCORE_MYCOSNP()
+    } else if (params.workflow == 'BOTH') {
+        BOTH()
+    } else {
+        log.error "Invalid workflow specified. Use 'PRE_MYCOSNP' , 'NFCORE_MYCOSNP', 'BOTH'."
+        exit 1
+    }
 }
 
 /*
