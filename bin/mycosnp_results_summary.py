@@ -32,6 +32,7 @@ def pass_fail (qc_stats):
 
     logging.debug('Remove "%" from "GC content after trimming"')
     qc['GC After Trimming normalized'] = qc['GC After Trimming'].str.rstrip('%').astype(float)
+    qc['GC After Trimming'] = qc['GC After Trimming'].str.rstrip('%').astype(float)
 
     logging.debug("Define pass fail criteria")
     pass_fail_criteria = (
@@ -93,6 +94,12 @@ def create_qc_reports(merged_df, run_name):
     logging.debug("Sanitizing clade for readability")
     merged_df = sanitize_clade(merged_df)
 
+    logging.debug("Adding Run column")
+    merged_df['Run'] = run_name
+
+    logging.debug('Remove "%" from "Genome Fraction at 10X"')
+    merged_df['Genome Fraction at 10X'] = merged_df['Genome Fraction at 10X'].str.rstrip('%').astype(float)
+
     logging.debug("Setting up columns for qc_report")
     qc_report_columns=[
         'Sample Name',
@@ -112,7 +119,8 @@ def create_qc_reports(merged_df, run_name):
         'pass/fail',
         'Clade',
         'fks1',
-        'fks1 mut'
+        'fks1 mut',
+        'Run'
     ]
 
     logging.debug("Creating qc_report file")
