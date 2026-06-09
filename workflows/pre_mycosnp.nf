@@ -209,7 +209,7 @@ workflow PRE_MYCOSNP_WF {
 
         REJECTED_SAMPLES (
             ch_rejected_file,
-            "Mycosnp"
+            "Pre_mycosnp"
         )
 
         ch_all_reads = ch_all_reads.mix(ch_filtered)
