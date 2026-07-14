@@ -22,6 +22,6 @@ process WSLH_SUMMARY {
     -r ${runname} \\
     -f ${fks1_combined} \\
     -c ${clade_designation} \\
-    -wv ${workflow.version} \\
+    -wv ${workflow.manifest.version}
     """
 }
