@@ -83,7 +83,7 @@ def merge_dfs(qc, fks1, clade):
 
     return merged_df
 
-def create_qc_reports(merged_df, run_name):
+def create_qc_reports(merged_df, run_name, wf_version):
 
     merged_df['fks1'] = np.nan
 
@@ -96,6 +96,9 @@ def create_qc_reports(merged_df, run_name):
 
     logging.debug("Adding Run column")
     merged_df['Run'] = run_name
+
+    logging.debug("Adding Workflow Version column")
+    merged_df['Workflow Version'] = wf_version
 
     logging.debug('Remove "%" from "Genome Fraction at 10X"')
     merged_df['Genome Fraction at 10X'] = merged_df['Genome Fraction at 10X'].str.rstrip('%').astype(float)
@@ -120,7 +123,8 @@ def create_qc_reports(merged_df, run_name):
         'Clade',
         'fks1',
         'fks1 mut',
-        'Run'
+        'Run',
+        'Workflow Version'
     ]
 
     logging.debug("Creating qc_report file")
@@ -138,7 +142,7 @@ if __name__ == "__main__":
 
     parser = CompileResults(prog = 'Compiles all of the mycosnp results into a WSLH specific report',
         description = "Generate QC report and NCBI Biosample and SRA spreadsheets for Candida auris submission.",
-        epilog = "Example usage: python CA_post_mycosnp.py -qc <QC_STATS> -r <BATCH_NAME> -f <FKS1> -c <CLADE_DESIGNATION>"
+        epilog = "Example usage: python CA_post_mycosnp.py -qc <QC_STATS> -r <BATCH_NAME> -f <FKS1> -c <CLADE_DESIGNATION> -wv <WORKFLOW_VERSION>"
         )
     parser.add_argument(
         "-qc",
@@ -161,6 +165,12 @@ if __name__ == "__main__":
         "--clade_designation",
         help="Pre-mycosnp-nf summary that includes clade designation.",
     )
+    parser.add_argument(
+        "-wv",
+        "--wf-version",
+        type=str,
+        help="Version of the workflow used to generate the results.",
+    )
 
     logging.debug("Run parser to call arguments downstream")
     args = parser.parse_args()
@@ -175,5 +185,5 @@ if __name__ == "__main__":
     merged_data = merge_dfs(qc_df, fks1_df, clade_df)
 
     logging.info("Creating QC reports")
-    create_qc_reports(merged_data, args.run_name)
+    create_qc_reports(merged_data, args.run_name, args.wf_version)
 
